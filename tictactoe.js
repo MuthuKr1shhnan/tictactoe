@@ -55,20 +55,18 @@ function askPlayer() {
 }
 function selectLetter() {
   input.question("Choose your Letter = ", (letter) => {
-    if (Number(letter) && letter !== "X" && letter !== "O") {
+    // Trim spaces and convert to uppercase for consistency
+    letter = letter.trim().toUpperCase();
+
+    if ((letter !== "X" && letter !== "O") || !isNaN(letter)) {
       console.log("Invalid input! Try again. Choose either X or O");
-      return selectLetter();
-    }
-    if (letter === "X") {
-      playerLetter = "X";
-      askPlayer();
-      computerLetter = "O";
-    } else if (letter === "O") {
-      playerLetter = "O";
-      askPlayer("O");
-      computerLetter = "X";
-    } else {
       selectLetter();
+      return;
+    } else {
+      playerLetter = letter;
+
+      askPlayer();
+      return;
     }
   });
 }
