@@ -2,6 +2,7 @@ import readline from "readline";
 
 //0,1,2,3,4,5,6,7,8
 let positions = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+
 let winningPoints = [
   [0, 1, 2],
   [3, 4, 5],
@@ -13,14 +14,19 @@ let winningPoints = [
   [2, 4, 6],
 ];
 
-let picker = [player, computer];
 let marked = new Array(positions.length).fill(false);
+let playerLetter = "X";
+let computerLetter = "O";
 
 // ================= TOSS
 let tose = () => {
   let chooser = Math.floor(Math.random() * 2);
   console.log("\nToss Winner →", chooser === 0 ? "PLAYER" : "COMPUTER");
-  picker[chooser]();
+  if (chooser === 0) {
+    selectLetter();
+  } else {
+    computer();
+  }
   return;
 };
 
@@ -44,11 +50,28 @@ function askPlayer() {
       console.log("Position already taken!");
       return askPlayer();
     }
-
-    player(position, "X");
+    player(position, playerLetter);
   });
 }
-
+function selectLetter() {
+  input.question("Choose your Letter = ", (letter) => {
+    if (Number(letter) && letter !== "X" && letter !== "O") {
+      console.log("Invalid input! Try again. Choose either X or O");
+      return selectLetter();
+    }
+    if (letter === "X") {
+      playerLetter = "X";
+      askPlayer();
+      computerLetter = "O";
+    } else if (letter === "O") {
+      playerLetter = "O";
+      askPlayer("O");
+      computerLetter = "X";
+    } else {
+      selectLetter();
+    }
+  });
+}
 // ================== PRINT BOARD
 function printPositions() {
   console.log(
@@ -64,12 +87,10 @@ function printPositions() {
 
 // ================= PLAYER
 function player(index, mark) {
-  if (mark === "X") {
-    positions[index] = "X";
+  if (mark === "X" || mark === "O") {
+    console.log(mark);
+    positions[index] = mark;
     marked[index] = true;
-  } else {
-    askPlayer();
-    return;
   }
 
   printPositions();
@@ -94,9 +115,9 @@ function player(index, mark) {
     }
 
     if (
-      positions[first] === "X" &&
-      positions[second] === "X" &&
-      positions[third] === "X"
+      positions[first] === playerLetter &&
+      positions[second] === playerLetter &&
+      positions[third] === playerLetter
     ) {
       console.log("Player Won The Game!!!");
       input.close();
@@ -124,7 +145,7 @@ function computer() {
   }
 
   let randomPick = emptyPlace[Math.floor(Math.random() * emptyPlace.length)];
-  positions[randomPick] = "O";
+  positions[randomPick] = computerLetter;
   marked[randomPick] = true;
 
   printPositions();
@@ -150,9 +171,9 @@ function computer() {
     }
 
     if (
-      positions[first] === "O" &&
-      positions[second] === "O" &&
-      positions[third] === "O"
+      positions[first] === computerLetter &&
+      positions[second] === computerLetter &&
+      positions[third] === computerLetter
     ) {
       console.log("Machine Won The Game!!!");
       input.close();
