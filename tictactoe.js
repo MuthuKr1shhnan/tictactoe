@@ -55,7 +55,7 @@ function askPlayer() {
 }
 function selectLetter() {
   input.question("Choose your Letter = ", (letter) => {
-    // Trim spaces and convert to uppercase for consistency
+    //Trim spaces and maintains letter in uppercase for consistancy 
     letter = letter.trim().toUpperCase();
 
     if ((letter !== "X" && letter !== "O") || !isNaN(letter)) {
