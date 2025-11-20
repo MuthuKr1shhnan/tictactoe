@@ -128,10 +128,10 @@ function tose() {
 
 // ================== ASK PLAYER
 function askPlayer() {
-  input.question("Enter your position (1-9)= ", (num) => {
+  input.question(`Enter your position (1-${boardSize})= `, (num) => {
     let position = Number(num) - 1;
 
-    if (isNaN(position) || position < 0 || position > 8) {
+    if (isNaN(position) || position < 0 || position > boardSize) {
       console.log("Invalid input! Try again.");
       return askPlayer();
     }
