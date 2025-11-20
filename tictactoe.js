@@ -96,7 +96,7 @@ function winningPointsProvider() {
   //diagonal two check from right corner
   let countFrDiag2 = 1;
 
-  let indexStartPointDiag2 = Math.sqrt(boardSize)-1;
+  let indexStartPointDiag2 = Math.sqrt(boardSize) - 1;
   let indexFrDiag2 = 0;
   while (countFrDiag2) {
     let diag2 = [];
@@ -214,7 +214,7 @@ function player(index, mark, n) {
       }
     }
     if (count === Math.sqrt(boardSize)) {
-      console.log("X is winner");
+      console.log("The WINNER is ====> Player 💫💫💫");
       input.close();
       return;
     } else {
@@ -259,7 +259,7 @@ function computer() {
       }
     }
     if (count === Math.sqrt(boardSize)) {
-      console.log("Machine is winner");
+      console.log("The WINNER is ====> Machine 💫💫💫");
       input.close();
       return;
     } else {
