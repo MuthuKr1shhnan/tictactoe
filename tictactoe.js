@@ -60,9 +60,6 @@ function askBoardSize() {
 
 let winningPoints = [];
 function winningPointsProvider() {
-  // ensure empty before building
-  winningPoints = [];
-
   //row check
   let countFrRow = boardSizeSqrt;
   let indexFrRow = 0;
