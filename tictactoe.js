@@ -60,11 +60,11 @@ function askBoardSize() {
 let winningPoints = [];
 function winningPointsProvider() {
   //row check
-  let countFrRow = Math.sqrt(boardSize);
+  let countFrRow = boardSizeSqrt
   let indexFrRow = 0;
   while (countFrRow) {
     let row = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt
     while (subCount) {
       row.push(indexFrRow);
       indexFrRow++;
@@ -74,16 +74,16 @@ function winningPointsProvider() {
     countFrRow--;
   }
   //col check
-  let countFrCol = Math.sqrt(boardSize);
+  let countFrCol =boardSizeSqrt
   let rowIndex = 0;
   let indexFrCol = 0;
   while (countFrCol) {
     let col = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt
     indexFrCol = rowIndex;
     while (subCount) {
       col.push(indexFrCol);
-      indexFrCol += Math.sqrt(boardSize);
+      indexFrCol += boardSizeSqrt
       subCount--;
     }
     indexFrCol = 0;
@@ -99,11 +99,11 @@ function winningPointsProvider() {
   let indexFrDiag1 = 0;
   while (countFrDiag1) {
     let diag1 = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt
     indexFrDiag1 = indexStartPointDiag1;
     while (subCount) {
       diag1.push(indexFrDiag1);
-      indexFrDiag1 += Math.sqrt(boardSize) + 1;
+      indexFrDiag1 += boardSizeSqrt
       subCount--;
     }
 
@@ -114,15 +114,15 @@ function winningPointsProvider() {
   //diagonal two check from right corner
   let countFrDiag2 = 1;
 
-  let indexStartPointDiag2 = Math.sqrt(boardSize) - 1;
+  let indexStartPointDiag2 = boardSizeSqrt - 1;
   let indexFrDiag2 = 0;
   while (countFrDiag2) {
     let diag2 = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt
     indexFrDiag2 = indexStartPointDiag2;
     while (subCount) {
       diag2.push(indexFrDiag2);
-      indexFrDiag2 += Math.sqrt(boardSize) - 1;
+      indexFrDiag2 += boardSizeSqrt- 1;
       subCount--;
     }
 
@@ -180,10 +180,10 @@ function selectLetter() {
 }
 // ================== PRINT BOARD
 function printPositions() {
-  let count = Math.sqrt(boardSize);
+  let count = boardSizeSqrt
   let index = 0;
   while (count) {
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt
     while (subCount) {
       process.stdout.write(positions[index]);
       if (subCount !== 1) {
