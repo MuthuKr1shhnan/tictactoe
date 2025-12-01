@@ -8,11 +8,28 @@ let input = readline.createInterface({
 let positions = [];
 let marked = [];
 let boardSize = 0;
-
+let boardSizeSqrt;
+let level;
 let playerLetter = "X";
 let computerLetter = "O";
+let cut = false;
 // START GAME
-askBoardSize();
+function selectLevel() {
+  input.question(
+    "1. Easy\n2. Hard\nEnter Your Level (Press 1 For easy..)=> ",
+    (num) => {
+      if (isNaN(num) || num > 2) {
+        console.log("Invalid Input!!!, Press either 2 or 3.");
+        selectLevel();
+      } else {
+        level = num;
+
+        askBoardSize();
+      }
+    }
+  );
+}
+selectLevel();
 //=================== ASK Board size
 function askBoardSize() {
   input.question("Enter the board size (e.g., 3 for a 3×3 board)= ", (num) => {
@@ -25,6 +42,7 @@ function askBoardSize() {
       }
       console.log(positions);
       boardSize = num * num;
+      boardSizeSqrt = num;
       winningPointsProvider();
       console.log(winningPoints);
       tose();
@@ -116,7 +134,7 @@ function winningPointsProvider() {
 
 // ============= TOSS
 function tose() {
-  let chooser = 0;
+  let chooser = Math.floor(Math.random() * 2);
   console.log("\nToss Winner →", chooser === 0 ? "PLAYER" : "COMPUTER");
   if (chooser === 0) {
     selectLetter();
@@ -213,7 +231,7 @@ function player(index, mark, n) {
         count++;
       }
     }
-    if (count === Math.sqrt(boardSize)) {
+    if (count == boardSizeSqrt) {
       console.log("The WINNER is ====> Player 💫💫💫");
       input.close();
       return;
@@ -276,13 +294,185 @@ function computer() {
 
   nextTurn(1); // next: player
 }
+function computer2() {
+  winMove();
+  //===== Win Logic =======
+  function winMove() {
+    for (let i = 0; i < winningPoints.length; i++) {
+      let temp = winningPoints[i];
+      let strike = 0;
+      for (let j = 0; j < boardSizeSqrt; j++) {
+        if (positions[temp[j]] === computerLetter) {
+          strike++;
+          console.log(strike);
+        }
+        if (strike == boardSizeSqrt - 1) {
+          for (let k = 0; k < boardSizeSqrt; k++) {
+            if (positions[temp[k]] === " ") {
+              positions[temp[k]] = computerLetter;
+
+              printPositions();
+              console.log("Computer2 won!!!");
+              input.close();
+              cut = true;
+              return;
+            }
+          }
+        }
+      }
+    }
+    blockMove();
+    return false;
+  }
+
+  if (cut) return;
+
+  //===== Block Logic =======
+  function blockMove() {
+    console.log("blockMove");
+    for (let i = 0; i < winningPoints.length; i++) {
+      let strikeFound = 0;
+      let temp = winningPoints[i];
+
+      for (let j = 0; j < boardSizeSqrt; j++) {
+        if (positions[temp[j]] === playerLetter) {
+          strikeFound++;
+        }
+      }
+
+      if (strikeFound == boardSizeSqrt - 1) {
+        for (let j = 0; j < boardSizeSqrt; j++) {
+          if (positions[temp[j]] === " ") {
+            positions[temp[j]] = computerLetter;
+            marked[temp[j]] = true;
+            printPositions();
+            nextTurn(1);
+            strikeFound = 0;
+            return;
+          }
+        }
+      }
+    }
+
+    cornerCheck();
+  }
+  //===== Corner Check Logic =======
+  function cornerCheck() {
+    if (positions[0] === " ") {
+      positions[0] = computerLetter;
+      marked[0] = true;
+      return;
+    } else if (positions[boardSizeSqrt - 1] === " ") {
+      positions[boardSizeSqrt - 1] = computerLetter;
+      marked[boardSizeSqrt - 1] = true;
+      printPositions();
+      return;
+    } else if (positions[boardSize - boardSizeSqrt] === " ") {
+      positions[boardSize - boardSizeSqrt] = computerLetter;
+      marked[boardSize - boardSizeSqrt] = true;
+      printPositions();
+      return;
+    } else if (positions[boardSize - 1] === " ") {
+      positions[boardSize - 1] = computerLetter;
+      marked[boardSize - 1] = true;
+      printPositions();
+      return;
+    }
+    centerCheck();
+  }
+
+  //===== Center Check Logic =======
+  function centerCheck() {
+    if (boardSizeSqrt % 2 !== 0) {
+      let center = Math.floor(boardSize * 0.5);
+      if (positions[center] === " ") {
+        positions[center] = computerLetter;
+        marked[center] = true;
+        return;
+      }
+    }
+
+    let centers = [
+      (boardSizeSqrt * 0.5 - 1) * boardSizeSqrt + (boardSizeSqrt * 0.5 - 1),
+      (boardSizeSqrt * 0.5 - 1) * boardSizeSqrt + boardSizeSqrt * 0.5,
+      boardSizeSqrt * 0.5 * boardSizeSqrt + (boardSizeSqrt * 0.5 - 1),
+      boardSizeSqrt * 0.5 * boardSizeSqrt + boardSizeSqrt * 0.5,
+    ];
+
+    for (let i = 0; i < centers.length; i++) {
+      if (positions[Math.floor(centers[i])] === " ") {
+        positions[Math.floor(centers[i])] = computerLetter;
+        marked[Math.floor(centers[i])] = true;
+        printPositions();
+        console.log("center", Math.floor(centers[i]));
+        return;
+      }
+    }
+
+    sideCheck();
+    return;
+  }
+  //===== Side Check Logic =======
+  function sideCheck() {
+    //rowTop
+    let rowTop = winningPoints[0];
+    for (let i = 0; i < rowTop.length - 1; i++) {
+      if (positions[rowTop[i]] === " ") {
+        positions[rowTop[i]] = computerLetter;
+        marked[rowTop[i]] = true;
+        nextTurn(1);
+        return;
+      }
+    }
+    let leftCol = winningPoints[4];
+    for (let i = 0; i < rowTop.length - 1; i++) {
+      if (positions[leftCol[i]] === " ") {
+        positions[leftCol[i]] = computerLetter;
+        marked[leftCol[i]] = true;
+        nextTurn(1);
+        return;
+      }
+    }
+    let rightCol = winningPoints[7];
+    for (let i = 0; i < rowTop.length - 1; i++) {
+      if (positions[rightCol[i]] === " ") {
+        positions[rightCol[i]] = computerLetter;
+        marked[rightCol[i]] = true;
+        nextTurn(1);
+        return;
+      }
+    }
+    let rowBot = winningPoints[9];
+    for (let i = 0; i < rowTop.length - 1; i++) {
+      if (positions[rowBot[i]] === " ") {
+        positions[rowBot[i]] = computerLetter;
+        marked[rowBot[i]] = true;
+        nextTurn(1);
+        return;
+      }
+    }
+    computer();
+  }
+  // DRAW CHECK
+  if (!marked.includes(false)) {
+    console.log("Match Draw!");
+    input.close();
+    return;
+  }
+  nextTurn(1);
+}
 
 // ================= switching players
 function nextTurn(who) {
   if (who === 0) {
-    computer();
-    return;
-  } else {
+    if (level == 1) {
+      computer();
+      return;
+    } else if (level == 2) {
+      computer2();
+      return;
+    }
+  } else if (who === 1) {
     askPlayer();
     return;
   }
