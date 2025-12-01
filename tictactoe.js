@@ -45,7 +45,6 @@ function askBoardSize() {
         marked.push(false);
       }
       winningPointsProvider();
-      console.log(winningPoints);
       tose();
       return;
     } else {
@@ -211,7 +210,6 @@ function printPositions() {
 // ================= PLAYER
 function player(index, mark, n) {
   if (mark === "X" || mark === "O") {
-    console.log(mark);
     positions[index] = mark;
     marked[index] = true;
   }
@@ -224,7 +222,6 @@ function player(index, mark, n) {
     let tem = winningPoints[i];
     for (let j = 0; j < tem.length; j++) {
       if (positions[tem[j]] === playerLetter) {
-        console.log(tem);
         count++;
       }
     }
@@ -321,7 +318,6 @@ function computer2() {
       for (let j = 0; j < boardSizeSqrt; j++) {
         if (positions[temp[j]] === computerLetter) {
           strike++;
-          console.log(strike);
         }
         if (strike == boardSizeSqrt - 1) {
           for (let k = 0; k < boardSizeSqrt; k++) {
@@ -347,26 +343,23 @@ function computer2() {
 
   //===== Block Logic =======
   function blockMove() {
-    console.log("blockMove");
     for (let i = 0; i < winningPoints.length; i++) {
-      let strikeFound = 0;
       let temp = winningPoints[i];
-
+      let strike = 0;
       for (let j = 0; j < boardSizeSqrt; j++) {
         if (positions[temp[j]] === playerLetter) {
-          strikeFound++;
+          strike++;
         }
-      }
+        if (strike == boardSizeSqrt - 1) {
+          for (let k = 0; k < boardSizeSqrt; k++) {
+            if (positions[temp[k]] === " ") {
+              positions[temp[k]] = computerLetter;
+              marked[temp[k]] = true;
 
-      if (strikeFound == boardSizeSqrt - 1) {
-        for (let j = 0; j < boardSizeSqrt; j++) {
-          if (positions[temp[j]] === " ") {
-            positions[temp[j]] = computerLetter;
-            marked[temp[j]] = true;
-            printPositions();
-            nextTurn(1);
-            strikeFound = 0;
-            return;
+              printPositions();
+
+              return;
+            }
           }
         }
       }
