@@ -18,12 +18,12 @@ function selectLevel() {
   input.question(
     "1. Easy\n2. Hard\nEnter Your Level (Press 1 For easy..)=> ",
     (num) => {
-      if (isNaN(num) || num > 2) {
-        console.log("Invalid Input!!!, Press either 2 or 3.");
+      num = Number(num);
+      if (isNaN(num) || num < 1 || num > 2) {
+        console.log("Invalid Input!!!, Press either 1 or 2.");
         selectLevel();
       } else {
         level = num;
-
         askBoardSize();
       }
     }
@@ -33,16 +33,17 @@ selectLevel();
 //=================== ASK Board size
 function askBoardSize() {
   input.question("Enter the board size (e.g., 3 for a 3×3 board)= ", (num) => {
-    if (!isNaN(num)) {
-      for (let i = 0; i < num * num; i++) {
+    let n = Number(num);
+    if (!isNaN(n) && n >= 2) {
+      boardSize = n * n;
+      boardSizeSqrt = n;
+
+      for (let i = 0; i < boardSize; i++) {
         positions.push(" ");
       }
-      for (let i = 0; i < num * num; i++) {
+      for (let i = 0; i < boardSize; i++) {
         marked.push(false);
       }
-      console.log(positions);
-      boardSize = num * num;
-      boardSizeSqrt = num;
       winningPointsProvider();
       console.log(winningPoints);
       tose();
@@ -59,12 +60,15 @@ function askBoardSize() {
 
 let winningPoints = [];
 function winningPointsProvider() {
+  // ensure empty before building
+  winningPoints = [];
+
   //row check
-  let countFrRow = Math.sqrt(boardSize);
+  let countFrRow = boardSizeSqrt;
   let indexFrRow = 0;
   while (countFrRow) {
     let row = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt;
     while (subCount) {
       row.push(indexFrRow);
       indexFrRow++;
@@ -74,16 +78,16 @@ function winningPointsProvider() {
     countFrRow--;
   }
   //col check
-  let countFrCol = Math.sqrt(boardSize);
+  let countFrCol = boardSizeSqrt;
   let rowIndex = 0;
   let indexFrCol = 0;
   while (countFrCol) {
     let col = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt;
     indexFrCol = rowIndex;
     while (subCount) {
       col.push(indexFrCol);
-      indexFrCol += Math.sqrt(boardSize);
+      indexFrCol += boardSizeSqrt;
       subCount--;
     }
     indexFrCol = 0;
@@ -99,11 +103,11 @@ function winningPointsProvider() {
   let indexFrDiag1 = 0;
   while (countFrDiag1) {
     let diag1 = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt;
     indexFrDiag1 = indexStartPointDiag1;
     while (subCount) {
       diag1.push(indexFrDiag1);
-      indexFrDiag1 += Math.sqrt(boardSize) + 1;
+      indexFrDiag1 += boardSizeSqrt + 1;
       subCount--;
     }
 
@@ -114,15 +118,15 @@ function winningPointsProvider() {
   //diagonal two check from right corner
   let countFrDiag2 = 1;
 
-  let indexStartPointDiag2 = Math.sqrt(boardSize) - 1;
+  let indexStartPointDiag2 = boardSizeSqrt - 1;
   let indexFrDiag2 = 0;
   while (countFrDiag2) {
     let diag2 = [];
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt;
     indexFrDiag2 = indexStartPointDiag2;
     while (subCount) {
       diag2.push(indexFrDiag2);
-      indexFrDiag2 += Math.sqrt(boardSize) - 1;
+      indexFrDiag2 += boardSizeSqrt - 1;
       subCount--;
     }
 
@@ -149,7 +153,7 @@ function askPlayer() {
   input.question(`Enter your position (1-${boardSize})= `, (num) => {
     let position = Number(num) - 1;
 
-    if (isNaN(position) || position < 0 || position > boardSize) {
+    if (isNaN(position) || position < 0 || position >= boardSize) {
       console.log("Invalid input! Try again.");
       return askPlayer();
     }
@@ -180,10 +184,10 @@ function selectLetter() {
 }
 // ================== PRINT BOARD
 function printPositions() {
-  let count = Math.sqrt(boardSize);
+  let count = boardSizeSqrt;
   let index = 0;
   while (count) {
-    let subCount = Math.sqrt(boardSize);
+    let subCount = boardSizeSqrt;
     while (subCount) {
       process.stdout.write(positions[index]);
       if (subCount !== 1) {
@@ -195,11 +199,7 @@ function printPositions() {
     }
     console.log();
     if (count !== 1) {
-      for (
-        let i = 0;
-        i < Math.sqrt(boardSize) + (Math.sqrt(boardSize) - 1);
-        i++
-      ) {
+      for (let i = 0; i < boardSizeSqrt + (boardSizeSqrt - 1); i++) {
         process.stdout.write("- ");
       }
     }
@@ -225,7 +225,7 @@ function player(index, mark, n) {
   for (let i = 0; i < winningPoints.length; i++) {
     let count = 0;
     let tem = winningPoints[i];
-    for (let j = 0; j < winningPoints.length; j++) {
+    for (let j = 0; j < tem.length; j++) {
       if (positions[tem[j]] === playerLetter) {
         console.log(tem);
         count++;
@@ -266,24 +266,30 @@ function computer() {
     if (marked[i] === false) emptyPlace.push(i);
   }
 
+  if (emptyPlace.length === 0) {
+    console.log("Match Draw!");
+    input.close();
+    return;
+  }
+
   let randomPick = emptyPlace[Math.floor(Math.random() * emptyPlace.length)];
   positions[randomPick] = computerLetter;
   marked[randomPick] = true;
 
   printPositions();
 
-  // WIN CHECK (using empty string "")
+  // WIN CHECK (using boardSizeSqrt)
   for (let i = 0; i < winningPoints.length; i++) {
     let count = 0;
     let tem = winningPoints[i];
 
-    for (let j = 0; j < winningPoints.length; j++) {
+    for (let j = 0; j < tem.length; j++) {
       if (positions[tem[j]] === computerLetter) {
         console.log(tem);
         count++;
       }
     }
-    if (count === Math.sqrt(boardSize)) {
+    if (count === boardSizeSqrt) {
       console.log("The WINNER is ====> Machine 💫💫💫");
       input.close();
       return;
@@ -324,6 +330,7 @@ function computer2() {
           for (let k = 0; k < boardSizeSqrt; k++) {
             if (positions[temp[k]] === " ") {
               positions[temp[k]] = computerLetter;
+              marked[temp[k]] = true;
 
               printPositions();
               console.log("Computer2 won!!!");
