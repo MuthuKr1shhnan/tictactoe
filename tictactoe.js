@@ -239,9 +239,16 @@ function player(index, mark, n) {
       count = 0;
     }
   }
-
+  function drawTrue() {
+    for (let i = 0; i < marked.length; i++) {
+      if (marked[i] === false) {
+        return true;
+      }
+    }
+    return false;
+  }
   // DRAW CHECK
-  if (!marked.includes(false)) {
+  if (!drawTrue()) {
     console.log("Match Draw!");
     input.close();
     return;
@@ -284,9 +291,16 @@ function computer() {
       count = 0;
     }
   }
-
+  function drawTrue() {
+    for (let i = 0; i < marked.length; i++) {
+      if (marked[i] === false) {
+        return true;
+      }
+    }
+    return false;
+  }
   // DRAW CHECK
-  if (!marked.includes(false)) {
+  if (!drawTrue()) {
     console.log("Match Draw!");
     input.close();
     return;
@@ -454,7 +468,15 @@ function computer2() {
     computer();
   }
   // DRAW CHECK
-  if (!marked.includes(false)) {
+  function drawTrue() {
+    for (let i = 0; i < marked.length; i++) {
+      if (marked[i] === false) {
+        return true;
+      }
+    }
+    return false;
+  }
+  if (!drawTrue()) {
     console.log("Match Draw!");
     input.close();
     return;
