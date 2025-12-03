@@ -134,13 +134,15 @@ function winningPointsProvider() {
 
 // ============= TOSS
 function tose() {
-  let chooser = Math.floor(Math.random() * 2);
+  let chooser = 1;
   console.log("\nToss Winner →", chooser === 0 ? "PLAYER" : "COMPUTER");
   if (chooser === 0) {
     selectLetter();
   } else {
-    computer();
+    if (level === 1) computer();
+    else computer2(); /// here i missed to call computer2 bro
   }
+
   return;
 }
 
@@ -308,7 +310,10 @@ function computer() {
 
   nextTurn(1); // next: player
 }
+
+//========= computer2
 function computer2() {
+  console.log("Machine 2 Turn");
   winMove();
   //===== Win Logic =======
   function winMove() {
@@ -321,7 +326,7 @@ function computer2() {
         }
         if (strike == boardSizeSqrt - 1) {
           for (let k = 0; k < boardSizeSqrt; k++) {
-            if (positions[temp[k]] === " ") {
+            if (marked[temp[k]] === false) {
               positions[temp[k]] = computerLetter;
               marked[temp[k]] = true;
 
@@ -352,7 +357,7 @@ function computer2() {
         }
         if (strike == boardSizeSqrt - 1) {
           for (let k = 0; k < boardSizeSqrt; k++) {
-            if (positions[temp[k]] === " ") {
+            if (marked[temp[k]] === false) {
               positions[temp[k]] = computerLetter;
               marked[temp[k]] = true;
 
@@ -369,21 +374,22 @@ function computer2() {
   }
   //===== Corner Check Logic =======
   function cornerCheck() {
-    if (positions[0] === " ") {
+    if (marked[0] === false) {
       positions[0] = computerLetter;
       marked[0] = true;
+      printPositions(); // here i missed to print the board bro, so i can not position player in 3rd place
       return;
-    } else if (positions[boardSizeSqrt - 1] === " ") {
+    } else if (marked[boardSizeSqrt - 1] === false) {
       positions[boardSizeSqrt - 1] = computerLetter;
       marked[boardSizeSqrt - 1] = true;
       printPositions();
       return;
-    } else if (positions[boardSize - boardSizeSqrt] === " ") {
+    } else if (marked[boardSize - boardSizeSqrt] === false) {
       positions[boardSize - boardSizeSqrt] = computerLetter;
       marked[boardSize - boardSizeSqrt] = true;
       printPositions();
       return;
-    } else if (positions[boardSize - 1] === " ") {
+    } else if (marked[boardSize - 1] === false) {
       positions[boardSize - 1] = computerLetter;
       marked[boardSize - 1] = true;
       printPositions();
@@ -487,7 +493,7 @@ function nextTurn(who) {
     if (level == 1) {
       computer();
       return;
-    } else if (level == 2) {
+    } else if (level === 2) {
       computer2();
       return;
     }
